@@ -1,0 +1,3109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shvans API Documentation - User & Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-surface: #101726;
+      --bg-card: #151f33;
+      --bg-code: #0b1120;
+      --border-color: #1e293b;
+      --border-focus: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #8b5cf6;
+      --badge-get: #10b981;
+      --badge-post: #3b82f6;
+      --badge-patch: #f59e0b;
+      --badge-delete: #ef4444;
+      --badge-auth: #ec4899;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #27354f;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #384b6e;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 320px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      -webkit-text-fill-color: initial;
+    }
+
+    .sidebar-search {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+    }
+
+    .nav-group-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 12px 10px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    /* Main Container */
+    .main-content {
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 1280px;
+      overflow-y: auto;
+    }
+
+    .doc-header {
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .doc-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .doc-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    /* Base URL Banner */
+    .base-url-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .base-url-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .base-url-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .base-url-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      color: #60a5fa;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-copy {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-copy:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .btn-copy.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #34d399;
+    }
+
+    /* Filter Chips */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .filter-chip {
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover,
+    .filter-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 40px 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .tag-admin {
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+    }
+
+    .tag-user {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .tag-system {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* API Endpoint Cards */
+    .api-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.2s ease;
+    }
+
+    .api-card:hover {
+      border-color: #334155;
+    }
+
+    .api-header {
+      padding: 16px 20px;
+      background: rgba(21, 31, 51, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      gap: 16px;
+    }
+
+    .api-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .method-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      min-width: 65px;
+      text-align: center;
+    }
+
+    .badge-get {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .badge-post {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .badge-patch {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .badge-delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .api-endpoint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .api-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .api-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .badge-auth-req {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 4px;
+      background: rgba(236, 72, 153, 0.12);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-public {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 4px;
+      background: rgba(148, 163, 184, 0.1);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .collapse-icon {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      transition: transform 0.2s ease;
+    }
+
+    .api-card.open .collapse-icon {
+      transform: rotate(180deg);
+    }
+
+    /* API Content Body */
+    .api-body {
+      display: none;
+      padding: 24px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-card);
+    }
+
+    .api-card.open .api-body {
+      display: block;
+    }
+
+    .meta-box {
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .meta-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+
+    .meta-key {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .meta-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      word-break: break-all;
+    }
+
+    /* Tabs Layout */
+    .box-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-container {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      position: relative;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      padding: 8px 14px;
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-lang {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      padding: 16px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .table-container {
+      margin-bottom: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 10px 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: #cbd5e1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .param-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+
+    .param-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #f472b6;
+    }
+
+    .param-req {
+      font-size: 0.72rem;
+      color: #f87171;
+      font-weight: 700;
+    }
+
+    .param-opt {
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+
+    /* Response Pill */
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .status-200 {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .status-400 {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .status-401 {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+
+    .status-422 {
+      background: rgba(236, 72, 153, 0.2);
+      color: #f472b6;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* Mobile toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        left: -320px;
+        transition: left 0.3s ease;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .main-content {
+        padding: 24px 16px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Mobile Toggle Button -->
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-title">
+        <span>⚡ Shvans API</span>
+        <span class="brand-badge">v1.0.0</span>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search API by method, URL..."
+        oninput="handleSearch(this.value)">
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">Admin APIs</div>
+      <a href="#admin-auth" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Admin Register & Login
+      </a>
+      <a href="#admin-category" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Categories CRUD
+      </a>
+      <a href="#admin-product" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Products CRUD
+      </a>
+      <a href="#admin-coupon" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Coupons CRUD
+      </a>
+      <a href="#admin-order" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Orders & Shipping
+      </a>
+
+      <div class="nav-group-title" style="margin-top: 14px;">User APIs</div>
+      <a href="#user-auth" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> OTP & Google Auth
+      </a>
+      <a href="#user-product" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Products & Categories
+      </a>
+      <a href="#user-cart" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Add Cart Items (Bulk)
+      </a>
+      <a href="#user-razorpay" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Magic Checkout & Payment
+      </a>
+      <a href="#user-order" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Orders, Cancel & Return
+      </a>
+
+      <div class="nav-group-title" style="margin-top: 14px;">System & Webhook</div>
+      <a href="#system-webhook" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Webhooks & Health
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="doc-header">
+      <h1 class="doc-title">Shvans Backend REST API Reference</h1>
+      <p class="doc-desc">
+        Comprehensive API documentation covering all User and Admin endpoints, request payloads, authentication headers,
+        and response formats.
+      </p>
+
+      <div class="base-url-card">
+        <div class="base-url-info">
+          <span class="base-url-label">Base URL (Local)</span>
+          <span class="base-url-value" id="localUrl">http://localhost:5001</span>
+        </div>
+        <div class="base-url-info">
+          <span class="base-url-label">Base URL (Production)</span>
+          <span class="base-url-value" id="prodUrl">https://server-vy5r.onrender.com</span>
+        </div>
+        <button class="btn-copy" onclick="copyText('https://server-vy5r.onrender.com', this)">📋 Copy Base URL</button>
+      </div>
+
+      <!-- Quick Filter Chips -->
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterByTag('all', this)">All APIs (33)</button>
+        <button class="filter-chip" onclick="filterByTag('admin', this)">Admin APIs (17)</button>
+        <button class="filter-chip" onclick="filterByTag('user', this)">User APIs (14)</button>
+        <button class="filter-chip" onclick="filterByTag('system', this)">Webhooks & System (3)</button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. ADMIN AUTHENTICATION -->
+    <!-- ========================================== -->
+    <section id="admin-auth" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Authentication</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Admin Register -->
+      <div class="api-card open" data-keywords="admin register post auth /api/v1/admin/auth/admin-register">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/auth/admin-register</span>
+            <span class="api-desc">Register a new administrator account</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Access Level</div>
+              <div class="meta-val">Public (Creates Admin)</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "name": "Super Admin",
+  "email": "admin@shvans.com",
+  "phone": "9876543210",
+  "password": "SecurePassword123@",
+  "deviceToken": "optional_fcm_token_string"
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "User Register",
+  "user": {
+    "_id": "67a3f8b1c4e92b001a123456",
+    "name": "Super Admin",
+    "email": "admin@shvans.com",
+    "phone": "9876543210",
+    "profile": null,
+    "createdAt": "2026-10-27T10:00:00.000Z"
+  },
+  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Login -->
+      <div class="api-card" data-keywords="admin login post auth /api/v1/admin/auth/admin-login">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/auth/admin-login</span>
+            <span class="api-desc">Authenticate admin and obtain Access Token</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Access Level</div>
+              <div class="meta-val">Admin Role Check</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "email": "admin@shvans.com",
+  "password": "SecurePassword123@",
+  "deviceToken": "optional_fcm_token_string"
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Admin Login Successfully",
+  "user": {
+    "_id": "67a3f8b1c4e92b001a123456",
+    "name": "Super Admin",
+    "email": "admin@shvans.com",
+    "phone": "9876543210",
+    "profile": null,
+    "createdAt": "2026-10-27T10:00:00.000Z"
+  },
+  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Logout -->
+      <div class="api-card" data-keywords="admin logout post auth /api/v1/admin/auth/admin-logout">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/auth/admin-logout</span>
+            <span class="api-desc">Invalidate current admin access token</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Role Allowed</div>
+              <div class="meta-val">admin</div>
+            </div>
+          </div>
+
+          <div class="box-title"><span>Request Body</span></div>
+          <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 20px;">No request body required.</p>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "User Logout",
+  "token": "a1b2c3d4e5f6g7h8..."
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. ADMIN CATEGORIES -->
+    <!-- ========================================== -->
+    <section id="admin-category" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Categories Management</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Add Category -->
+      <div class="api-card" data-keywords="add category admin post /api/v1/admin/category/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/category/add</span>
+            <span class="api-desc">Create a new product category with image upload</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+          </div>
+
+          <div class="box-title"><span>Form Data Fields</span></div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Required</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">name</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>Unique category name (e.g. "Ayurvedic Oils")</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">description</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Detailed description of category</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">categoryImage</span></td>
+                  <td><span class="param-type">File (Image)</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Image file (.jpg, .jpeg, .png, .webp)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Category Add Successfully",
+  "category": {
+    "_id": "67a3f912c4e92b001a123457",
+    "name": "Ayurvedic Oils",
+    "description": "Pure extract herbal and essential oils",
+    "categoryImage": "https://server-vy5r.onrender.com/uploads/categoryImage/1719999999-oil.jpg",
+    "status": "active"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Categories -->
+      <div class="api-card" data-keywords="get category admin /api/v1/admin/category/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/category/get</span>
+            <span class="api-desc">Fetch all categories with absolute image URLs</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Categories",
+  "category": [
+    {
+      "_id": "67a3f912c4e92b001a123457",
+      "name": "Ayurvedic Oils",
+      "description": "Pure extract herbal oils",
+      "categoryImage": "https://server-vy5r.onrender.com/uploads/categoryImage/oil.jpg",
+      "status": "active",
+      "createdAt": "2026-10-27T10:05:00.000Z",
+      "updatedAt": "2026-10-27T10:05:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Category -->
+      <div class="api-card" data-keywords="update category patch /api/v1/admin/category/update">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/category/update</span>
+            <span class="api-desc">Update category name, description, status, or image</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Required</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">categoryId</span></td>
+                  <td><span class="param-type">String (ObjectId)</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>ID of category to update</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">name</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>New category name</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">description</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>New description</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">status</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>"active" | "inactive"</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">categoryImage</span></td>
+                  <td><span class="param-type">File</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Replacement image file</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Category Update Successfully"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. ADMIN PRODUCTS -->
+    <!-- ========================================== -->
+    <section id="admin-product" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Products Management</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Add Product -->
+      <div class="api-card" data-keywords="add product post admin /api/v1/admin/product/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/product/add</span>
+            <span class="api-desc">Create product with variants, dimensions, and multiple images</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Required</th>
+                  <th>Example / Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">categoryId</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>Valid category ObjectId</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">name</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>e.g. "Natural Almond Oil"</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">packing</span></td>
+                  <td><span class="param-type">JSON String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td><code>{"width":10, "length":15, "height":5, "weight":0.5}</code> (weight in kg)</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">variants</span></td>
+                  <td><span class="param-type">JSON String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td><code>[{"price": 499, "stock": 100, "unit": "200ml"}]</code></td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">description</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Product full description</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">additionalInfo</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Usage instructions, benefits</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">productImages</span></td>
+                  <td><span class="param-type">Files (Array)</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Multiple image files (field name: productImages)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Product Add Successfully",
+  "product": {
+    "_id": "67a3fc01c4e92b001a123458",
+    "categoryId": "67a3f912c4e92b001a123457",
+    "name": "Natural Almond Oil",
+    "sku": "SKU-9382-710",
+    "description": "Cold-pressed pure sweet almond oil",
+    "additionalInfo": "Best for hair and glowing skin",
+    "productImages": [
+      "https://server-vy5r.onrender.com/uploads/productImages/almond_front.jpg"
+    ],
+    "variants": [
+      {
+        "_id": "67a3fc01c4e92b001a123459",
+        "price": 499,
+        "stock": 100,
+        "unit": "200ml"
+      }
+    ],
+    "packing": {
+      "width": 10,
+      "length": 15,
+      "height": 5,
+      "weight": 0.5
+    },
+    "status": "active",
+    "category": "Ayurvedic Oils"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Products -->
+      <div class="api-card" data-keywords="get products admin /api/v1/admin/product/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/product/get</span>
+            <span class="api-desc">Fetch all products with category name and full image URLs</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Products Successfully",
+  "products": [
+    {
+      "_id": "67a3fc01c4e92b001a123458",
+      "categoryId": "67a3f912c4e92b001a123457",
+      "category": "Ayurvedic Oils",
+      "name": "Natural Almond Oil",
+      "sku": "SKU-9382-710",
+      "productImages": ["https://server-vy5r.onrender.com/uploads/productImages/almond.jpg"],
+      "variants": [
+        { "_id": "67...", "price": 499, "stock": 100, "unit": "200ml" }
+      ],
+      "packing": { "width": 10, "length": 15, "height": 5, "weight": 0.5 },
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Product -->
+      <div class="api-card" data-keywords="update product patch admin /api/v1/admin/product/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/product/update/:id</span>
+            <span class="api-desc">Update product details, append or delete images</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Product ObjectId</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Required</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">categoryId</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>Category ObjectId</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">name</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-req">Required</span></td>
+                  <td>Product Name</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">deleteImages</span></td>
+                  <td><span class="param-type">JSON String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Array of image relative paths to delete: <code>["/uploads/productImages/..."]</code></td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">productImages</span></td>
+                  <td><span class="param-type">Files</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>New images to append</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">variants</span></td>
+                  <td><span class="param-type">JSON String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Updated variants array</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">packing</span></td>
+                  <td><span class="param-type">JSON String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>Updated packing specs</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">status</span></td>
+                  <td><span class="param-type">String</span></td>
+                  <td><span class="param-opt">Optional</span></td>
+                  <td>"active" | "inactive"</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Product Update Successfully",
+  "product": { ... }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Product -->
+      <div class="api-card" data-keywords="delete product admin /api/v1/admin/product/delete/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/admin/product/delete/:id</span>
+            <span class="api-desc">Delete a product and unlink uploaded image files from disk</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Product ObjectId</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Product Delete Successfully",
+  "productId": "67a3fc01c4e92b001a123458"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. ADMIN COUPONS -->
+    <!-- ========================================== -->
+    <section id="admin-coupon" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Coupons Management</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Add Coupon -->
+      <div class="api-card" data-keywords="add coupon post admin /api/v1/admin/coupon/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/coupon/add</span>
+            <span class="api-desc">Create discount coupon (fixed amount or percentage)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "couponCode": "SHVANS20",
+  "summary": "Flat 20% OFF",
+  "description": "Get flat 20% off on all wellness items above Rs. 999",
+  "value": 20,
+  "value_type": "percentage",
+  "cart_value": 999,
+  "limit": 500,
+  "stauts": "active"
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "New Coupon Add Successfully",
+  "coupon": {
+    "_id": "67a3fd99c4e92b001a123460",
+    "couponCode": "SHVANS20",
+    "summary": "Flat 20% OFF",
+    "description": "Get flat 20% off on all wellness items above Rs. 999",
+    "value": 20,
+    "value_type": "percentage",
+    "cart_value": 999,
+    "limit": 500,
+    "stauts": "active"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Coupons -->
+      <div class="api-card" data-keywords="get coupons admin /api/v1/admin/coupon/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/coupon/get</span>
+            <span class="api-desc">List all discount coupons</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Coupon Get Successfully",
+  "coupons": [
+    {
+      "_id": "67a3fd99c4e92b001a123460",
+      "couponCode": "SHVANS20",
+      "summary": "Flat 20% OFF",
+      "description": "Get flat 20% off on all wellness items above Rs. 999",
+      "value": 20,
+      "value_type": "percentage",
+      "cart_value": 999,
+      "limit": 500,
+      "stauts": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Coupon -->
+      <div class="api-card" data-keywords="update coupon patch admin /api/v1/admin/coupon/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/coupon/update/:id</span>
+            <span class="api-desc">Modify coupon value, validity, limit, or status</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Coupon ObjectId</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "summary": "Flat 25% OFF Updated",
+  "description": "Updated discount rule",
+  "value": 25,
+  "value_type": "percentage",
+  "cart_value": 1200,
+  "limit": 200,
+  "stauts": "active"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Coupon Update Successfully",
+  "coupon": { ... }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Coupon -->
+      <div class="api-card" data-keywords="delete coupon admin /api/v1/admin/coupon/delete/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/admin/coupon/delete/:id</span>
+            <span class="api-desc">Remove coupon by ID</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Coupon ObjectId</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Coupon Delete Successfully",
+  "coupon": { ... }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. ADMIN ORDERS & SHIPROCKET -->
+    <!-- ========================================== -->
+    <section id="admin-order" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Orders & Shiprocket Fulfillment</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Get Orders -->
+      <div class="api-card" data-keywords="get orders admin /api/v1/admin/order/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/order/get</span>
+            <span class="api-desc">Get all customer orders sorted by newest first</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public/Internal</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "sucess": true,
+  "message": "Get All Orders",
+  "orders": [
+    {
+      "_id": "67a3fe88c4e92b001a123470",
+      "userId": {
+        "_id": "67a3f8b1c4e92b001a123456",
+        "name": "Darshik Patel",
+        "email": "customer@gmail.com",
+        "phone": "9876543210"
+      },
+      "orderNumber": "SHV_839201948291",
+      "type": "forward",
+      "status": "pending",
+      "items": [
+        {
+          "name": "Natural Almond Oil",
+          "sku": "SKU-9382-710",
+          "price": 499,
+          "quantity": 1
+        }
+      ],
+      "total": 499,
+      "discount": 0,
+      "shippingcharges": 50,
+      "paymentData": {
+        "method": "prepaid",
+        "status": "paid",
+        "razorpay_order_id": "order_XXXXXX",
+        "razorpay_payment_id": "pay_XXXXXX"
+      },
+      "shipmentData": {
+        "shipment_id": "8932019",
+        "shiprocket_order_id": "9382101",
+        "courier_partner": "Delhivery Surface",
+        "awb_number": null
+      },
+      "createdAt": "2026-10-27T10:15:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accept Order -->
+      <div class="api-card" data-keywords="accept order post admin /api/v1/admin/order/accepte">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/order/accepte</span>
+            <span class="api-desc">Accept pending orders, assign Shiprocket AWB, schedule pickup</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Admin / System</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "orderIds": [
+    "67a3fe88c4e92b001a123470"
+  ],
+  "pickupDate": "2026-10-28"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Action Taken</span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 0.88rem;">
+            Calls Shiprocket Courier & AWB Assignment API, generates pickup token, updates DB order status to
+            <code>accepted</code> with <code>shipmentData.awb_number</code> and <code>picuprequest</code> details.
+          </p>
+        </div>
+      </div>
+
+      <!-- Generate Labels -->
+      <div class="api-card" data-keywords="generate labels post admin /api/v1/admin/order/labels">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/order/labels</span>
+            <span class="api-desc">Generate Shiprocket shipping PDF labels and mark status to 'processing'</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Admin / System</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "shipmentIds": [
+    "8932019"
+  ]
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Label Generated",
+  "label_url": "https://s3.ap-south-1.amazonaws.com/shiprocket-media/labels/label_8932019.pdf"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. USER AUTHENTICATION -->
+    <!-- ========================================== -->
+    <section id="user-auth" data-tag="user">
+      <div class="section-title">
+        <span>User Authentication & Profile</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Send OTP -->
+      <div class="api-card" data-keywords="send otp user post auth /api/v1/user/auth/sent-otp">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/auth/sent-otp</span>
+            <span class="api-desc">Send WhatsApp OTP to user's phone number</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "phone": "9876543210"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "OTP Send Your Wahtaspp Number",
+  "userId": "67a40010c4e92b001a123480"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify OTP -->
+      <div class="api-card" data-keywords="verify otp login user /api/v1/user/auth/sent-otp-verify">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/auth/sent-otp-verify</span>
+            <span class="api-desc">Verify OTP and obtain JWT user token</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "userId": "67a40010c4e92b001a123480",
+  "otp": "482910",
+  "deviceToken": "optional_fcm_token"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "User Login Successfully",
+  "user": {
+    "_id": "67a40010c4e92b001a123480",
+    "name": "Customer",
+    "email": null,
+    "phone": "9876543210",
+    "profile": null,
+    "createdAt": "2026-10-27T10:20:00.000Z"
+  },
+  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Login -->
+      <div class="api-card" data-keywords="google login user firebase /api/v1/user/auth/user-google-login">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/auth/user-google-login</span>
+            <span class="api-desc">Firebase Google ID Token Login & auto account sync</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "GoogleIdToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6...",
+  "deviceToken": "optional_fcm_token"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "User Login Successfully",
+  "user": {
+    "_id": "67a40010c4e92b001a123480",
+    "name": "Darshik",
+    "email": "darshik@gmail.com",
+    "phone": null,
+    "profile": "https://lh3.googleusercontent.com/...",
+    "createdAt": "2026-10-27T10:20:00.000Z"
+  },
+  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Logout -->
+      <div class="api-card" data-keywords="user logout post /api/v1/user/auth/user-logout">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/auth/user-logout</span>
+            <span class="api-desc">Revoke active user access token session</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "User Logout Successfully"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. USER PRODUCTS & CATEGORIES -->
+    <!-- ========================================== -->
+    <section id="user-product" data-tag="user">
+      <div class="section-title">
+        <span>User Product & Catalog Browsing</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- User Get Products -->
+      <div class="api-card" data-keywords="user get products /api/v1/user/product/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/product/get</span>
+            <span class="api-desc">Get all active published products with variant pricing and images</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Products Successfully",
+  "products": [
+    {
+      "_id": "67a3fc01c4e92b001a123458",
+      "categoryId": "67a3f912c4e92b001a123457",
+      "category": "Ayurvedic Oils",
+      "name": "Natural Almond Oil",
+      "sku": "SKU-9382-710",
+      "description": "Cold-pressed pure sweet almond oil",
+      "additionalInfo": "Best for hair and skin",
+      "productImages": [
+        "https://server-vy5r.onrender.com/uploads/productImages/almond.jpg"
+      ],
+      "variants": [
+        {
+          "_id": "67a3fc01c4e92b001a123459",
+          "price": 499,
+          "stock": 100,
+          "unit": "200ml"
+        }
+      ],
+      "packing": {
+        "width": 10,
+        "length": 15,
+        "height": 5,
+        "weight": 0.5
+      },
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Get Categories -->
+      <div class="api-card" data-keywords="user get categories /api/v1/user/product/categories">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/product/categories</span>
+            <span class="api-desc">Get list of active categories for storefront display</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Categories",
+  "category": [
+    {
+      "_id": "67a3f912c4e92b001a123457",
+      "name": "Ayurvedic Oils",
+      "description": "Pure extract herbal and essential oils",
+      "categoryImage": "https://server-vy5r.onrender.com/uploads/categoryImage/oil.jpg"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 8. USER CART MANAGEMENT -->
+    <!-- ========================================== -->
+    <section id="user-cart" data-tag="user">
+      <div class="section-title">
+        <span>User Cart Management</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Add Cart (Bulk Insert) -->
+      <div class="api-card open" data-keywords="add cart bulk insertmany user post /api/v1/user/cart/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/cart/add</span>
+            <span class="api-desc">Bulk add items to cart (skips items if product & variant already in cart)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Duplicate Check</div>
+              <div class="meta-val">Prevents duplicate (productId + variantId) per user</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Request Payload (Body) - Supports array or { carts: [...] }</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "carts": [
+    {
+      "productId": "67a3fc01c4e92b001a123458",
+      "variantId": "67a3fc01c4e92b001a123459",
+      "quantity": 2
+    }
+  ]
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Success Response (200 OK - New Items Added)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Cart items added successfully",
+  "addedCount": 1,
+  "cart": [
+    {
+      "_id": "67a401a0c4e92b001a123490",
+      "userId": "67a40010c4e92b001a123480",
+      "productId": "67a3fc01c4e92b001a123458",
+      "variantId": "67a3fc01c4e92b001a123459",
+      "quantity": 2,
+      "createdAt": "2026-10-27T10:30:00.000Z",
+      "updatedAt": "2026-10-27T10:30:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Response when all items already exist in cart</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "All items already exist in user's cart",
+  "addedCount": 0,
+  "cart": []
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get User Cart -->
+      <div class="api-card" data-keywords="get cart user /api/v1/user/cart/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/cart/get</span>
+            <span class="api-desc">Fetch user cart with populated product details, variant prices, and total
+              calculations</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Cart items fetched successfully",
+  "totalItems": 1,
+  "totalQuantity": 2,
+  "cartTotal": 998,
+  "cart": [
+    {
+      "_id": "67a401a0c4e92b001a123490",
+      "userId": "67a40010c4e92b001a123480",
+      "productId": "67a3fc01c4e92b001a123458",
+      "variantId": "67a3fc01c4e92b001a123459",
+      "quantity": 2,
+      "product": {
+        "_id": "67a3fc01c4e92b001a123458",
+        "name": "Natural Almond Oil",
+        "sku": "SKU-9382-710",
+        "description": "Cold-pressed sweet almond oil",
+        "productImages": [
+          "https://server-vy5r.onrender.com/uploads/productImages/almond.jpg"
+        ],
+        "packing": { "width": 10, "length": 15, "height": 5, "weight": 0.5 },
+        "status": "active"
+      },
+      "variant": {
+        "_id": "67a3fc01c4e92b001a123459",
+        "price": 499,
+        "stock": 100,
+        "unit": "200ml"
+      },
+      "itemTotal": 998,
+      "createdAt": "2026-10-27T10:30:00.000Z",
+      "updatedAt": "2026-10-27T10:30:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Cart Item Quantity -->
+      <div class="api-card" data-keywords="update cart quantity patch user /api/v1/user/cart/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/user/cart/update/:id</span>
+            <span class="api-desc">Update cart item quantity with stock verification (supports param :id or body
+              cartId)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Cart ObjectId (or pass cartId in body)</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "quantity": 3
+}</code></pre>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Cart updated successfully",
+  "cart": {
+    "_id": "67a401a0c4e92b001a123490",
+    "userId": "67a40010c4e92b001a123480",
+    "productId": "67a3fc01c4e92b001a123458",
+    "variantId": "67a3fc01c4e92b001a123459",
+    "quantity": 3,
+    "createdAt": "2026-10-27T10:30:00.000Z",
+    "updatedAt": "2026-10-27T10:35:00.000Z"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Cart Item -->
+      <div class="api-card" data-keywords="delete cart user /api/v1/user/cart/delete/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/user/cart/delete/:id</span>
+            <span class="api-desc">Remove single item from user's cart (supports param :id or body cartId)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Cart ObjectId</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Cart item deleted successfully",
+  "cartId": "67a401a0c4e92b001a123490"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clear All Cart Items -->
+      <div class="api-card" data-keywords="clear cart user delete /api/v1/user/cart/clear">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/user/cart/clear</span>
+            <span class="api-desc">Empty user's entire shopping cart</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Cart cleared successfully",
+  "deletedCount": 3
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 9. USER RAZORPAY MAGIC CHECKOUT -->
+    <!-- ========================================== -->
+    <section id="user-razorpay" data-tag="user">
+      <div class="section-title">
+        <span>Razorpay Magic Checkout & Payments</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Razorpay Payment Order -->
+      <div class="api-card" data-keywords="payment order razorpay cart /api/v1/user/razorpay/payment-order">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/payment-order</span>
+            <span class="api-desc">Create Razorpay order and temporary checkout record from shopping cart</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "carts": [
+    {
+      "productId": "67a3fc01c4e92b001a123458",
+      "variantId": "67a3fc01c4e92b001a123459",
+      "quantity": 2
+    }
+  ]
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Payment Order Successfully",
+  "PaymentOrder": {
+    "id": "order_OD9482019482",
+    "entity": "order",
+    "amount": 99800,
+    "amount_paid": 0,
+    "amount_due": 99800,
+    "currency": "INR",
+    "receipt": "SHV_839201948291",
+    "status": "created"
+  },
+  "razorpayKey": "rzp_test_YourRazorpayKeyHere"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Shipping Info Callback -->
+      <div class="api-card"
+        data-keywords="shipping charges shiprocket pincode callback /api/v1/user/razorpay/shipping-charge">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/shipping-charge</span>
+            <span class="api-desc">Razorpay Magic Checkout dynamic shipping rates calculation per address</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Callback / Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 12px;">
+            Called automatically by Razorpay Magic Checkout when customer inputs delivery address. Accepts request body
+            containing address array and checkout order ID.
+          </p>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "order_id": "SHV_839201948291",
+  "razorpay_order_id": "order_OD9482019482",
+  "addresses": [
+    {
+      "id": "addr_cust_1",
+      "zipcode": "380015",
+      "state_code": "GJ",
+      "country": "India"
+    }
+  ]
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "addresses": [
+    {
+      "id": "addr_cust_1",
+      "zipcode": "380015",
+      "state_code": "GJ",
+      "country": "India",
+      "shipping_methods": [
+        {
+          "id": "54",
+          "name": "Delhivery Surface",
+          "description": "Estimated Delivery: 2-4 days",
+          "serviceable": true,
+          "shipping_fee": 5000,
+          "cod": true,
+          "cod_fee": 3000
+        }
+      ]
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Promotions List -->
+      <div class="api-card" data-keywords="promotions coupons magic checkout /api/v1/user/razorpay/promotion">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/promotion</span>
+            <span class="api-desc">Fetch available promotional coupon offers for Magic Checkout</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Promation Successfully",
+  "promotions": [
+    {
+      "code": "SHVANS20",
+      "summary": "Flat 20% OFF",
+      "description": "Get flat 20% off on all wellness items above Rs. 999"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Apply Promotion -->
+      <div class="api-card" data-keywords="apply coupon promotion razorpay /api/v1/user/razorpay/promotion-applay">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/promotion-applay</span>
+            <span class="api-desc">Validate and apply coupon code during checkout</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "order_id": "SHV_839201948291",
+  "code": "SHVANS20",
+  "contact": "9876543210",
+  "email": "customer@gmail.com"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Success Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Coupon Applay Successfully",
+  "promotion": {
+    "reference_id": "67a3fd99c4e92b001a123460",
+    "type": "coupon",
+    "code": "SHVANS20",
+    "value": 20,
+    "value_type": "percentage",
+    "description": "Get flat 20% off on all wellness items above Rs. 999"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Verify Payment & Place Order -->
+      <div class="api-card" data-keywords="verify payment place order shiprocket /api/v1/user/razorpay/varify-payment">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/varify-payment</span>
+            <span class="api-desc">Verify Razorpay signature, create Shiprocket order, and save final order to DB</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "razorpay_order_id": "order_OD9482019482",
+  "razorpay_payment_id": "pay_PD8492019482",
+  "razorpay_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Order Placed Successfully",
+  "NewOrder": {
+    "_id": "67a3fe88c4e92b001a123470",
+    "userId": "67a40010c4e92b001a123480",
+    "couponId": "67a3fd99c4e92b001a123460",
+    "orderNumber": "SHV_839201948291",
+    "type": "forward",
+    "status": "pending",
+    "items": [
+      {
+        "name": "Natural Almond Oil",
+        "sku": "SKU-9382-710",
+        "price": 499,
+        "quantity": 2
+      }
+    ],
+    "discount": 199.6,
+    "shippingcharges": 50,
+    "total": 848.4,
+    "paymentData": {
+      "method": "prepaid",
+      "status": "paid",
+      "razorpay_order_id": "order_OD9482019482",
+      "razorpay_payment_id": "pay_PD8492019482"
+    },
+    "shipmentData": {
+      "shipment_id": "8932019",
+      "shiprocket_order_id": "9382101",
+      "courier_partner": "Delhivery Surface"
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 9. USER ORDERS -->
+    <!-- ========================================== -->
+    <section id="user-order" data-tag="user">
+      <div class="section-title">
+        <span>User Orders, Cancellations & Returns</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Get User Orders -->
+      <div class="api-card" data-keywords="user get orders /api/v1/user/order/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/order/get</span>
+            <span class="api-desc">Get all orders placed by the authenticated customer</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Order Get Successfully",
+  "orders": [
+    {
+      "_id": "67a3fe88c4e92b001a123470",
+      "orderNumber": "SHV_839201948291",
+      "status": "pending",
+      "total": 848.4,
+      "items": [ ... ],
+      "paymentData": { "method": "prepaid", "status": "paid" },
+      "shipmentData": { "courier_partner": "Delhivery Surface" },
+      "createdAt": "2026-10-27T10:15:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cancel Order -->
+      <div class="api-card" data-keywords="cancel order user post refund /api/v1/user/order/canele-order/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/order/canele-order/:id</span>
+            <span class="api-desc">Cancel order (Shiprocket cancellation & automatic Razorpay refund)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public / By ID</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Order ObjectId</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Allowed Stages</div>
+              <div class="meta-val">pending, accepted, processing</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Order Cancele Successfully",
+  "order": {
+    "_id": "67a3fe88c4e92b001a123470",
+    "status": "cancelled",
+    "paymentData": {
+      "status": "refunded"
+    },
+    "refundData": {
+      "method": "prepaid",
+      "status": "pending",
+      "refundId": "rfnd_XXXXXXXX"
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Order -->
+      <div class="api-card" data-keywords="return order user post bankDetails /api/v1/user/order/return/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/order/return/:id</span>
+            <span class="api-desc">Initiate 7-day return request via Shiprocket Reverse Pickup</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Order ObjectId</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "reason": "Defective item packaging received",
+  "bankDetails": {
+    "accountHolderName": "Darshik Patel",
+    "accountNumber": "123456789012",
+    "ifscCode": "HDFC0000123",
+    "accountType": "savings"
+  }
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Return Created Successfully"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 10. SYSTEM & WEBHOOKS -->
+    <!-- ========================================== -->
+    <section id="system-webhook" data-tag="system">
+      <div class="section-title">
+        <span>Webhooks & System Health</span>
+        <span class="section-tag tag-system">System</span>
+      </div>
+
+      <!-- Health Check -->
+      <div class="api-card" data-keywords="health check system /helth-check">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/helth-check</span>
+            <span class="api-desc">System health check endpoint</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Server is running successfully"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Webhook -->
+      <div class="api-card" data-keywords="razorpay refund webhook post /webhook/razorpay-refund">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/webhook/razorpay-refund</span>
+            <span class="api-desc">Razorpay refund status event synchronization</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 HMAC-SHA256</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">x-razorpay-signature: &lt;HMAC Signature&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Supported Events</div>
+              <div class="meta-val">refund.created, refund.processed, refund.failed</div>
+            </div>
+          </div>
+          <div class="box-title"><span>Response</span></div>
+          <p style="color: #cbd5e1; font-size: 0.88rem;">Returns <code>{"success": true}</code> upon valid signature
+            validation.</p>
+        </div>
+      </div>
+
+      <!-- Shiprocket Webhook -->
+      <div class="api-card" data-keywords="shiprocket tracking webhook post /webhook/shipping-status">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/webhook/shipping-status</span>
+            <span class="api-desc">Shiprocket real-time tracking, RTO, and reverse pickup sync</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 API Key</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers Required</div>
+              <div class="meta-val">x-api-key: &lt;SHIPROKET_WEBHOOK_API_KEY&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Handled Statuses</div>
+              <div class="meta-val">PICKED UP, SHIPPED, DELIVERED, RTO, RETURN</div>
+            </div>
+          </div>
+          <div class="box-title"><span>Response</span></div>
+          <p style="color: #cbd5e1; font-size: 0.88rem;">Returns <code>"ok"</code> with 200 HTTP status.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Shvans API Documentation &bull; Created for internal development and integration</p>
+    </footer>
+  </main>
+
+  <script>
+    // Toggle Card Expand / Collapse
+    function toggleCard(header) {
+      const card = header.closest('.api-card');
+      card.classList.toggle('open');
+    }
+
+    // Copy Code Block Content
+    function copyCode(btn) {
+      const container = btn.closest('.box-title').nextElementSibling;
+      const code = container.querySelector('code');
+      if (!code) return;
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Copy Arbitrary Text
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Filter by Tag
+    function filterByTag(tag, chip) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      const sections = document.querySelectorAll('section');
+      sections.forEach(sec => {
+        if (tag === 'all' || sec.getAttribute('data-tag') === tag) {
+          sec.style.display = 'block';
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+    }
+
+    // Search APIs
+    function handleSearch(query) {
+      const q = query.toLowerCase().trim();
+      const cards = document.querySelectorAll('.api-card');
+      cards.forEach(card => {
+        const text = (card.getAttribute('data-keywords') || '') + ' ' + card.innerText;
+        if (!q || text.toLowerCase().includes(q)) {
+          card.style.display = 'block';
+          if (q) card.classList.add('open');
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Toggle Sidebar on Mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+  </script>
+</body>
+
+</html>

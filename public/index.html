@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shveraa - Magic Checkout Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .checkout {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 340px;
+            box-shadow: 0 4px 20px #0001;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #222;
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 15px;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="checkout">
+        <h2>Shveraa</h2>
+        <p>Razorpay Magic Checkout Test</p>
+        <h3 id="amount">Amount: Loading...</h3>
+        <button id="payButton">Pay Now</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://server-vy5r.onrender.com/api/v1/user/razorpay/payment-order";
+
+        const carts = [
+            {
+                productId: "6ad9f5018012c91d4e7365d8",
+                variantId: "6ad9f5018012c91d4e7365d9",
+                quantity: 2
+            }
+        ];
+
+        const button = document.getElementById("payButton");
+        const message = document.getElementById("message");
+
+        button.addEventListener("click", async () => {
+            button.disabled = true;
+            message.textContent = "Creating payment order...";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ carts })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "Order creation failed");
+                }
+
+                const order = data.PaymentOrder;
+                const key = data.razorpayKey;
+                console.log(key)
+
+                document.getElementById("amount").textContent =
+                    "Amount: ₹" + (order.amount / 100).toFixed(2);
+
+                if (!order.id || !key) {
+                    throw new Error("Razorpay order ID or key is missing");
+                }
+
+                message.textContent = "Opening Magic Checkout...";
+
+                if (!document.getElementById("razorpay-magic-script")) {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement("script");
+                        script.id = "razorpay-magic-script";
+                        script.src = "https://checkout.razorpay.com/v1/magic-checkout.js";
+                        script.onload = resolve;
+                        script.onerror = () => reject(
+                            new Error("Razorpay Magic Checkout script failed to load")
+                        );
+                        document.head.appendChild(script);
+                    });
+                }
+
+                if (typeof window.Razorpay !== "function") {
+                    throw new Error(
+                        "Magic Checkout SDK unavailable. Confirm the supported script and account activation with Razorpay."
+                    );
+                }
+
+                // ========================================================
+                // 🛠️ FIX: ADD MAGIC PAYLOAD OPTIONS TO FORCE API CALLS
+                // ========================================================
+                const checkout = new window.Razorpay({
+                    key,
+                    order_id: order.id,
+                    amount: order.amount,
+                    currency: order.currency || "INR",
+                    name: "Shvans",
+                    description: "Purchase from Shveraa",
+                    // આ ૨ ઓપ્શન્સ Razorpay ને કમ્પલસરી તમારા સર્વર પર રિક્વેસ્ટ મોકલવા મજબૂર કરશે
+                    one_click_checkout: true,
+                    magic: {
+                        should_fetch_customer: true
+                    },
+                    handler: function (paymentResponse) {
+                        console.log("Payment response:", paymentResponse);
+                        message.textContent =
+                            "Payment response received. Verify payment on your backend.";
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            message.textContent = "Checkout closed.";
+                            button.disabled = false;
+                        }
+                    }
+                });
+
+                // ========================================================
+                // 🛠️ FIX: INITIALIZE THE MAGIC CHECKOUT INTERFACE
+                // ========================================================
+                if (window.Razorpay.MagicCheckout) {
+                    window.Razorpay.MagicCheckout(checkout);
+                }
+
+                checkout.open();
+
+            } catch (error) {
+                console.error(error);
+                message.textContent = error.message;
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
