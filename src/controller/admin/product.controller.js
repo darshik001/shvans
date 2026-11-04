@@ -1,4 +1,4 @@
-const { GenerateSKU, DeleteImage } = require('../../helper/helper')
+﻿const { GenerateSKU, DeleteImage } = require('../../helper/helper')
 const { CustomeError } = require('../../middleware/globelError')
 const categoryModel = require('../../model/category.model')
 const productModel = require('../../model/product.model')
@@ -151,14 +151,62 @@ exports.UpdateProduct = async (req, res, next) => {
                 images.push(path)
             })
         }
+        let parsedVariants = variants
+            ? (typeof variants === 'string' ? JSON.parse(variants) : variants)
+            : product.variants;
+
+        if (Array.isArray(parsedVariants)) {
+            const usedExistingIds = new Set();
+            parsedVariants = parsedVariants.map((v, index) => {
+                const variantObj = {
+                    price: Number(v.price),
+                    stock: Number(v.stock ?? 0),
+                    unit: v.unit
+                };
+
+                // 1. If incoming variant already has an _id matching an existing variant in DB, preserve it
+                if (v._id) {
+                    const matchedExisting = (product.variants || []).find(
+                        ev => ev._id.toString() === v._id.toString()
+                    );
+                    if (matchedExisting) {
+                        variantObj._id = matchedExisting._id;
+                        usedExistingIds.add(matchedExisting._id.toString());
+                        return variantObj;
+                    }
+                }
+
+                // 2. If no _id or not matched yet, match by unit with an unused existing variant
+                const matchByUnit = (product.variants || []).find(
+                    ev => ev.unit === v.unit && !usedExistingIds.has(ev._id.toString())
+                );
+                if (matchByUnit) {
+                    variantObj._id = matchByUnit._id;
+                    usedExistingIds.add(matchByUnit._id.toString());
+                    return variantObj;
+                }
+
+                // 3. Fallback: match by index with an unused existing variant
+                const matchByIndex = (product.variants || [])[index];
+                if (matchByIndex && !usedExistingIds.has(matchByIndex._id.toString())) {
+                    variantObj._id = matchByIndex._id;
+                    usedExistingIds.add(matchByIndex._id.toString());
+                    return variantObj;
+                }
+
+                // If newly added variant, leave _id undefined so Mongoose generates a new one
+                return variantObj;
+            });
+        }
+
         const prodcutData = {
             categoryId,
             name,
             description: description || product.description,
             additionalInfo: additionalInfo || product.additionalInfo,
             productImages: images || product.productImages,
-            variants: variants ? JSON.parse(variants) : product.variants,
-            packing: packing ? JSON.parse(packing) : product.packing,
+            variants: parsedVariants || product.variants,
+            packing: packing ? (typeof packing === 'string' ? JSON.parse(packing) : packing) : product.packing,
             status: status || product.status
         }
         console.log(prodcutData)
