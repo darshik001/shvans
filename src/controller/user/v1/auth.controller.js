@@ -34,7 +34,7 @@ exports.SendUserLoginOtp = async (req, res, next) => {
 
     if (!sentotp) {
       const otpsentres = await SendWhatsAppMessage(phone, template_code, variables)
-      if (otpsentres.status !== "success") {
+      if (otpsentres?.status !== "success") {
         return next(CustomeError(400, 'Faild To Sent OTP Try Againe'))
       }
       sentotp = await otpModel.create({ userId: user._id, otp: otp })

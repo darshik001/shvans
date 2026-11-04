@@ -112,6 +112,7 @@ exports.UpdateProduct = async (req, res, next) => {
     try {
 
         let { deleteImages, categoryId, name, description, additionalInfo, packing, variants, status } = req.body || {}
+        console.log(status)
         const productId = req.params.id
 
         let product = await productModel.findById(productId)
@@ -160,7 +161,7 @@ exports.UpdateProduct = async (req, res, next) => {
             packing: packing ? JSON.parse(packing) : product.packing,
             status: status || product.status
         }
-
+        console.log(prodcutData)
 
         product = await productModel.findByIdAndUpdate(productId, prodcutData, { returnDocument: 'after' })
         product = product.toObject();

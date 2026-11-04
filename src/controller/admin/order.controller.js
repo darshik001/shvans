@@ -7,7 +7,7 @@ const { AssignCourierAndAWB, GenerateLabel, GeneratePickup } = require("../../se
 exports.GetOrders = async (req, res, next) => {
     try {
 
-        const orders = await orderModel.find().populate("userId", "name email phone profile").sort({ createdAt: -1 })
+        const orders = await orderModel.find({type:"forward"}).populate("userId", "name email phone profile").sort({ createdAt: -1 })
 
         return res.status(200).json({ sucess: true, message: "Get All Orders", orders })
 

@@ -46,7 +46,7 @@ exports.GetCoupons = async (req, res, next) => {
 
 exports.UpdateCoupon = async (req, res, next) => {
     try {
-        const { summary, description, value, value_type, limit, stauts, cart_value } = req.body || {}
+        const { summary, description, value, value_type, limit, status, cart_value } = req.body || {}
 
         const id = req.params.id
         const updatedata = {
@@ -56,8 +56,11 @@ exports.UpdateCoupon = async (req, res, next) => {
             value_type,
             cart_value,
             limit,
-            stauts
+            status
         }
+
+
+        console.log(updatedata)
 
         const coupon = await couponModel.findByIdAndUpdate(id, updatedata, { returnDocument: 'after' }).select("-createdAt -updatedAt")
         return res.status(200).json({ success: true, message: "Coupon Update Successfully", coupon })

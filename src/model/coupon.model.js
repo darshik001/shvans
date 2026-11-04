@@ -34,7 +34,7 @@ const CouponSchema = mongoose.Schema({
         type: Number,
         default: null
     },
-    stauts: {
+    status: {
         type: String,
         enum: ['active', 'inactive'],
         default: "active"

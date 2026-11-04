@@ -72,7 +72,7 @@ exports.AdminLogin = async (req, res, next) => {
         }
 
         let user = await userModel.findOne({ email: email })
-console.log(user)
+
         if (!user) {
             return next(CustomeError(400, "Invalid Credentials"));
         }
@@ -94,10 +94,14 @@ console.log(user)
 
 
 
-        const updateData = { $addToSet: { accessToken: hashAccessToken } };
+        const updateData = {
+            $set: {
+                accessToken: [hashAccessToken]
+            }
+        };
 
         if (deviceToken) {
-            updateData.$addToSet.deviceToken = deviceToken;
+            updateData.$addToSet = { deviceToken };
         }
 
         user = await userModel.findByIdAndUpdate(user._id, updateData, { returnDocument: 'after' }).select('name email phone profile createdAt')
