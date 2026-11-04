@@ -153,7 +153,7 @@ exports.RazorpayShippingInfo = async (req, res) => {
 
                 // Shiprocket ના રિસ્પોન્સમાંથી અવેલેબલ કુરિયર્સ કાઢો
                 const couriers = srRes.data?.data?.available_courier_companies || [];
-
+                console.log(couriers)
                 // Jo koi courier available na hoy to unserviceable return karo
                 if (couriers.length === 0) {
                     return {
@@ -211,7 +211,7 @@ exports.RazorpayShippingInfo = async (req, res) => {
                         id: "standard_fallback",
                         name: "Standard Shipping",
                         description: "Standard Delivery within 4-6 days",
-                        serviceable: false,
+                        serviceable: true,
                         shipping_fee: 6000,
                         cod: true,
                         cod_fee: 4500
