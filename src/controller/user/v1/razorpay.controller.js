@@ -211,7 +211,7 @@ exports.RazorpayShippingInfo = async (req, res) => {
                         id: "standard_fallback",
                         name: "Standard Shipping",
                         description: "Standard Delivery within 4-6 days",
-                        serviceable: true,
+                        serviceable: false,
                         shipping_fee: 6000,
                         cod: true,
                         cod_fee: 4500
