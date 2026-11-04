@@ -187,7 +187,6 @@ exports.RazorpayShippingInfo = async (req, res) => {
                     zipcode: addr.zipcode,
                     state_code: addr.state_code,
                     country: addr.country,
-                    serviceable:true,
                     shipping_methods: [{
                         id: String(cheapestCourier.courier_company_id),
                         name: cheapestCourier.courier_name || "Express Courier",
@@ -548,7 +547,7 @@ exports.RazorapayVerifyPayment = async (req, res, next) => {
         const NewOrder = await orderModel.create(placedOrderdata);
 
         await checkoutModel.findByIdAndDelete(checkoutOrder._id)
-        return res.status(200).json({ success: true, message: 'Order Placed Successfully', order:NewOrder });
+        return res.status(200).json({ success: true, message: 'Order Placed Successfully', order: NewOrder });
 
     } catch (error) {
         return next(error);
