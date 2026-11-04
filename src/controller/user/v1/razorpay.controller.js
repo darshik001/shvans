@@ -62,7 +62,7 @@ exports.RazorpayPaymentOrder = async (req, res, next) => {
                 name: product.name,
                 description: product.description || "",
                 image_url: `${process.env.BACKEND_DOMIN_URL}${product.productImages?.[0]}`,
-                product_url: `${process.env.BACKEND_DOMIN_URL}/products/${product._id}`
+                product_url: `http://localhost:5173/product/${product._id}`
             };
         });
 
@@ -153,7 +153,7 @@ exports.RazorpayShippingInfo = async (req, res) => {
 
                 // Shiprocket ના રિસ્પોન્સમાંથી અવેલેબલ કુરિયર્સ કાઢો
                 const couriers = srRes.data?.data?.available_courier_companies || [];
-                
+
                 // Jo koi courier available na hoy to unserviceable return karo
                 if (couriers.length === 0) {
                     return {
@@ -548,6 +548,288 @@ exports.RazorapayVerifyPayment = async (req, res, next) => {
 
         await checkoutModel.findByIdAndDelete(checkoutOrder._id)
         return res.status(200).json({ success: true, message: 'Order Placed Successfully', order: NewOrder });
+
+    } catch (error) {
+        return next(error);
+    }
+};
+
+
+
+
+
+
+
+exports.CreateCODOrder = async (req, res, next) => {
+    try {
+        const {
+            order_id,
+            name,
+            email,
+            phone,
+            address
+        } = req.body || {};
+
+        // 1. Validate required fields
+        if (!order_id) {
+            return next(CustomeError(400, "Missing checkout order_id"));
+        }
+
+        if (!name || !phone || !address) {
+            return next(CustomeError(400, "Missing customer details"));
+        }
+
+        // 2. Check duplicate order
+        const existingOrder = await orderModel.findOne({
+            orderNumber: order_id
+        });
+
+        if (existingOrder) {
+            return next(CustomeError(400, "This order has already been placed"));
+        }
+
+        // 3. Find checkout order
+        const checkoutOrder = await checkoutModel.findOne({
+            order_id
+        });
+
+        if (!checkoutOrder) {
+            return next(CustomeError(404, "Checkout Order Not Found"));
+        }
+
+        // 4. Find or create user
+        let user = await userModel.findOne({ phone });
+
+        if (user) {
+            if (!user.email && email) user.email = email;
+            if (!user.name && name) user.name = name;
+
+            await user.save();
+        } else if (email) {
+            user = await userModel.findOne({ email });
+
+            if (user) {
+                if (!user.phone) user.phone = phone;
+                if (!user.name) user.name = name;
+
+                await user.save();
+            } else {
+                user = await userModel.create({
+                    name,
+                    phone,
+                    email
+                });
+            }
+        } else {
+            user = await userModel.create({
+                name,
+                phone
+            });
+        }
+
+        // 5. Checkout items
+        const items = checkoutOrder.line_items.map(item => ({
+            ...item.toObject?.() ?? item,
+            price: item.price / 100
+        }));
+
+        // 6. Calculate total
+        const total = checkoutOrder.line_items.reduce(
+            (sum, item) =>
+                sum + (Number(item.price) * Number(item.quantity)),
+            0
+        ) / 100;
+
+        // 7. Product weight and packing details
+        const skuArray = checkoutOrder.line_items.map(item => item.sku);
+
+        const products = await productModel.find({
+            sku: { $in: skuArray }
+        }).select("sku packing");
+
+        const productPackingMap = new Map(
+            products.map(product => [
+                product.sku,
+                {
+                    weight: Number(product.packing?.weight) || 0,
+                    width: Number(product.packing?.width) || 0,
+                    height: Number(product.packing?.height) || 0,
+                    length: Number(product.packing?.length) || 0
+                }
+            ])
+        );
+
+        const totalWeight = checkoutOrder.line_items.reduce(
+            (total, item) => {
+                const packing = productPackingMap.get(item.sku);
+
+                return total +
+                    (packing?.weight || 0) * Number(item.quantity || 0);
+            },
+            0
+        );
+
+        const totalQuantity = checkoutOrder.line_items.reduce(
+            (total, item) => total + Number(item.quantity || 0),
+            0
+        );
+
+        const totalWidth = checkoutOrder.line_items.reduce(
+            (total, item) => {
+                const packing = productPackingMap.get(item.sku);
+                return total +
+                    (packing?.width || 0) * Number(item.quantity || 0);
+            },
+            0
+        );
+
+        const totalHeight = checkoutOrder.line_items.reduce(
+            (total, item) => {
+                const packing = productPackingMap.get(item.sku);
+                return total +
+                    (packing?.height || 0) * Number(item.quantity || 0);
+            },
+            0
+        );
+
+        const totalLength = checkoutOrder.line_items.reduce(
+            (total, item) => {
+                const packing = productPackingMap.get(item.sku);
+                return total +
+                    (packing?.length || 0) * Number(item.quantity || 0);
+            },
+            0
+        );
+
+        const width = totalQuantity ? totalWidth / totalQuantity : 0;
+        const height = totalQuantity ? totalHeight / totalQuantity : 0;
+        const length = totalQuantity ? totalLength / totalQuantity : 0;
+
+        // 8. Shipping charges
+        const packageDetails = {
+            pincode: address.zipcode,
+            weight: totalWeight,
+            cod: 1
+        };
+
+        const srRes = await getshippingcharg(packageDetails);
+
+        const availableCouriers =
+            srRes?.data?.data?.available_courier_companies || [];
+
+        if (!availableCouriers.length) {
+            return next(CustomeError(400, "No courier available for this address"));
+        }
+
+        const bestCourier = availableCouriers.reduce(
+            (best, current) =>
+                current.rate < best.rate ? current : best
+        );
+
+        const courierDetails = {
+            courierCompanyId: bestCourier.courier_company_id,
+            courierId: bestCourier.id,
+            courierName: bestCourier.courier_name,
+            rate: bestCourier.rate,
+            freightCharge: bestCourier.freight_charge,
+            chargeWeight: bestCourier.charge_weight,
+            estimatedDeliveryDays: bestCourier.estimated_delivery_days,
+            etd: bestCourier.etd,
+            zone: bestCourier.zone
+        };
+
+
+        // 9. Order items for Shiprocket
+        const order_items = items.map(item => ({
+            name: item.name,
+            sku: item.sku,
+            units: Number(item.quantity),
+            selling_price: Number(item.price),
+            discount: 0,
+            tax: 0,
+            hsn: item.HSCode || ""
+        }));
+
+        const createorderData = {
+            order_id,
+            order_date: new Date().toISOString().slice(0, 16).replace("T", " "),
+            pickup_location: process.env.SHIPROCKET_PICKUP_LOCATION || "HOME",
+            comment: "Create New COD Order",
+            billing_customer_name: name,
+            billing_last_name: name,
+            billing_address: address.line1,
+            billing_address_2: address.line2 || "",
+            billing_city: address.city,
+            billing_pincode: address.zipcode,
+            billing_state: address.state,
+            billing_country: "India",
+            billing_email: email || user.email || "",
+            billing_phone: phone,
+            shipping_is_billing: true,
+            order_items,
+            payment_method: "COD",
+            shipping_charges: 0,
+            giftwrap_charges: 0,
+            transaction_charges: 0,
+            total_discount: 0,
+            sub_total: total,
+            length,
+            breadth: width,
+            height,
+            weight: totalWeight
+        };
+
+
+        console.log(createorderData)
+        // return res.json(createorderData)
+
+        // 10. Create Shiprocket order
+        const confirmshiproketorderData =
+            await CreatOrderINShiproket(createorderData);
+
+        // 11. Shipment data
+        const shipmentData = {
+            shipment_id: confirmshiproketorderData.shipment_id,
+            shiprocket_order_id: confirmshiproketorderData.order_id,
+            awb_number: null,
+            courier_id: courierDetails.courierId,
+            courier_partner: courierDetails.courierName
+        };
+
+        // 12. Payment data (Always COD)
+        const paymentData = {
+            method: "cod",
+            razorpay_order_id: null,
+            razorpay_payment_id: null,
+            status: "pending"
+        };
+
+        // 13. Create final order
+        const placedOrderdata = {
+            userId: user._id,
+            couponId: null,
+            orderNumber: order_id,
+            type: "forward",
+            address,
+            items,
+            discount: 0,
+            shippingcharges: 0,
+            total,
+            status: "pending",
+            paymentData,
+            shipmentData
+        };
+
+        const NewOrder = await orderModel.create(placedOrderdata);
+
+        // 14. Delete checkout
+        await checkoutModel.findByIdAndDelete(checkoutOrder._id);
+
+        return res.status(200).json({
+            success: true,
+            message: "COD Order Placed Successfully",
+            order: NewOrder
+        });
 
     } catch (error) {
         return next(error);

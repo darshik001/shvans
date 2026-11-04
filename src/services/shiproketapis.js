@@ -86,6 +86,7 @@ exports.AssignCourierAndAWB = async (data) => {
             }
         }
     );
+    console.log(response.data)
     return response.data;
 }
 
@@ -131,7 +132,7 @@ exports.GeneratePickup = async (shipmentIds, pickupDate = null) => {
 
 
 exports.ShiprocketCancel = async (id) => {
-    
+
     const url = "https://apiv2.shiprocket.in/v1/external/orders/cancel";
     const token = await getShiproketAccessToken()
     const response = await axios.post(
