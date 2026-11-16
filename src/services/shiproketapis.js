@@ -151,19 +151,34 @@ exports.ShiprocketCancel = async (id) => {
 
 
 exports.ShiproketReturnCreate = async (data) => {
-    const url = "https://apiv2.shiprocket.in/v1/external/shipments/create/return-shipment";
-    const token = await getShiproketAccessToken()
-    const response = await axios.post(
-        url,
-        data,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
+    try {
+        const url = "https://apiv2.shiprocket.in/v1/external/shipments/create/return-shipment";
+        const token = await getShiproketAccessToken()
+        const response = await axios.post(
+            url,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
             }
-        }
-    );
+        );
 
 
-    return response.data;
+
+        console.log(response.data)
+
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        return new Error(error)
+    }
 }
+
+
+
+
+
+
+

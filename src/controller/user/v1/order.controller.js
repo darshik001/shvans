@@ -8,9 +8,7 @@ const { ShiprocketCancel, ShiproketReturnCreate } = require("../../../services/s
 exports.UserGetOrder = async (req, res, next) => {
     try {
         const userId = req.user._id
-        console.log(userId)
         const orders = await orderModel.find({ userId: userId })
-
         return res.status(200).json({ success: true, message: 'Order Get Successfully', orders })
     } catch (error) {
         return next(error)
@@ -33,7 +31,6 @@ exports.CanceleOrder = async (req, res, next) => {
         }
 
         try {
-
             const canceleOrderResposn = await ShiprocketCancel(order.shipmentData.shiprocket_order_id)
         } catch (error) {
             return next(error.message)
@@ -71,7 +68,6 @@ exports.CanceleOrder = async (req, res, next) => {
             order = await orderModel.findByIdAndUpdate(order._id, { $set: { status: "cancelled", refundData, "paymentData.status": "refunded" } }, { returnDocument: 'after' })
         }
 
-
         return res.status(200).json({ success: true, message: "Order Cancele Successfully", order })
 
     } catch (error) {
@@ -85,11 +81,11 @@ exports.ReturnOrder = async (req, res, next) => {
         const orderId = req.params.id
         const user = req.user
 
-        const {bankDetails,reason}  =req.body || {}
+        const { bankDetails, reason } = req.body || {}
 
-       if (typeof reason !== "string" || !reason.trim()) {
-    return next(CustomeError(422, "Return reason is required"));
-}
+        if (typeof reason !== "string" || !reason.trim()) {
+            return next(CustomeError(422, "Return reason is required"));
+        }
         let order = await orderModel.findById(orderId)
 
         if (!order) {
@@ -124,7 +120,7 @@ exports.ReturnOrder = async (req, res, next) => {
             const order_items = order.items.map((p) => {
                 return {
                     "name": p.name,
-                    "qc_enable": true,
+                    "qc_enable": false,
                     "qc_product_name": p.name,
                     "sku": p.sku,
                     "units": p.quantity,
@@ -149,7 +145,7 @@ exports.ReturnOrder = async (req, res, next) => {
                 weight += product.packing.weight * item.quantity;
 
                 length += product.packing.length;
-                breadth += product.packing.breadth;
+                breadth += product.packing.width;
                 height += product.packing.height;
 
                 count++;
@@ -164,7 +160,7 @@ exports.ReturnOrder = async (req, res, next) => {
 
 
             const returnApiData = {
-                order_id: order.orderNumber,
+                order_id: `RE_${order.orderNumber}`,
                 order_date: new Date(order.createdAt).toISOString().slice(0, 16).replace("T", " "),
                 payment_method: "PREPAID",
                 pickup_customer_name: order.address.name,
@@ -189,7 +185,7 @@ exports.ReturnOrder = async (req, res, next) => {
                 shipping_pincode: process.env.SELLER_PINCODE,
 
                 order_items,
-                sub_total: order.totalAmount,
+                sub_total: order.total,
                 total_discount: 0,
                 length: length,
                 breadth: breadth,
@@ -198,10 +194,13 @@ exports.ReturnOrder = async (req, res, next) => {
                 request_pickup: true
             }
 
-            const ReturnOrder = await ShiproketReturnCreate(returnApiData)
 
-            if (!ReturnOrder.status || !ReturnOrder.payload?.awb_generated) {
-               await ShiprocketCancel(ReturnOrder.payload.order_id)
+            console.log("retruin api data", returnApiData)
+            const ReturnOrder = await ShiproketReturnCreate(returnApiData)
+            console.log(ReturnOrder)
+            
+            if (!ReturnOrder?.status || !ReturnOrder.payload?.awb_generated) {
+                await ShiprocketCancel(ReturnOrder.payload?.order_id)
                 return next(CustomeError(400, "Unable to process the return request right now. Please try again later"))
             }
 
@@ -233,7 +232,7 @@ exports.ReturnOrder = async (req, res, next) => {
             order = await orderModel.findByIdAndUpdate(order._id, { $set: { refundData, returnData, type: "return" } })
 
 
-            return res.status(200).json({ success: true, message: "Return Created Successfully" })
+            return res.status(200).json({ success: true, message: "Return Created Successfully", order })
 
 
         } else {

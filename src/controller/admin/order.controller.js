@@ -73,7 +73,7 @@ exports.AccepteOrder = async (req, res, next) => {
 
 
         const updatedorders = await orderModel.find({ type: "forward" }).populate("userId", "name email phone profile").sort({ createdAt: -1 })
-        console.log(updatedorders)
+
         return res.status(200).json({ sucess: true, message: "Orders Accepted", orders: updatedorders })
 
 
@@ -91,7 +91,7 @@ exports.GenerateLabels = async (req, res, next) => {
         }
 
         const respons = await GenerateLabel(req.body?.shipmentIds);
-
+        console.log(respons)
         const notCreatedShipmentIds = respons?.not_created && typeof respons.not_created === "object"
             ? (Array.isArray(respons.not_created) ? respons.not_created : Object.keys(respons.not_created))
             : [];
@@ -107,9 +107,13 @@ exports.GenerateLabels = async (req, res, next) => {
             );
         }
 
+        const updatedorders = await orderModel.find({ type: "forward" }).populate("userId", "name email phone profile").sort({ createdAt: -1 })
+
+
         return res.status(200).json({
             success: true,
             message: respons?.message || "Label Generated",
+            orders: updatedorders,
             label_url: respons?.label_url || null,
         });
 
