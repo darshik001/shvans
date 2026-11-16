@@ -120,7 +120,7 @@ exports.ReturnOrder = async (req, res, next) => {
             const order_items = order.items.map((p) => {
                 return {
                     "name": p.name,
-                    "qc_enable": false,
+                    "qc_enable": true,
                     "qc_product_name": p.name,
                     "sku": p.sku,
                     "units": p.quantity,
@@ -198,7 +198,7 @@ exports.ReturnOrder = async (req, res, next) => {
             console.log("retruin api data", returnApiData)
             const ReturnOrder = await ShiproketReturnCreate(returnApiData)
             console.log(ReturnOrder)
-            
+
             if (!ReturnOrder?.status || !ReturnOrder.payload?.awb_generated) {
                 await ShiprocketCancel(ReturnOrder.payload?.order_id)
                 return next(CustomeError(400, "Unable to process the return request right now. Please try again later"))
