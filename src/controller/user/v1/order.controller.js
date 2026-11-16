@@ -160,7 +160,7 @@ exports.ReturnOrder = async (req, res, next) => {
 
 
             const returnApiData = {
-                order_id: `RE_${order.orderNumber}`,
+                order_id: order.orderNumber,
                 order_date: new Date(order.createdAt).toISOString().slice(0, 16).replace("T", " "),
                 payment_method: "PREPAID",
                 pickup_customer_name: order.address.name,
