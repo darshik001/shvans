@@ -25,7 +25,7 @@ exports.RazorpayPaymentOrder = async (req, res, next) => {
 
 
 
-        const line_items = carts.map(cart => {
+        const line_items_checkout = carts.map(cart => {
             const product = products.find(
                 p => p._id.toString() === cart.productId
             );
@@ -56,6 +56,7 @@ exports.RazorpayPaymentOrder = async (req, res, next) => {
                 type: "e-commerce",
                 sku: product.sku,
                 variant_id: variant._id.toString(),
+                productId: product._id,
                 price,
                 offer_price: price,
                 quantity: cart.quantity,
@@ -65,6 +66,8 @@ exports.RazorpayPaymentOrder = async (req, res, next) => {
                 product_url: `http://localhost:5173/product/${product._id}`
             };
         });
+
+        const line_items = line_items_checkout.map(({ productId, ...item }) => item);
 
 
         const line_items_total = line_items.reduce((total, item) => total + item.offer_price * item.quantity, 0);
@@ -88,7 +91,7 @@ exports.RazorpayPaymentOrder = async (req, res, next) => {
         console.log(orderData.id)
         console.log(line_items)
         console.log(line_items_total)
-        const checkoutData = await checkoutModel.create({ order_id: orderData.receipt, line_items, line_items_total })
+        const checkoutData = await checkoutModel.create({ order_id: orderData.receipt, line_items: line_items_checkout, line_items_total })
 
         return res.status(200).json({ success: true, message: 'Payment Order Successfully', PaymentOrder: orderData, razorpayKey: process.env.RAZORPAY_API_KEY })
 

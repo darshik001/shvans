@@ -48,7 +48,7 @@ exports.UserGetProduct = async (req, res, next) => {
 
 exports.UserGetCategories = async (req, res, next) => {
     try {
-        const category = await categoryModel.aggregate([
+        const categories = await categoryModel.aggregate([
             { $match: { status: 'active' } },
             {
                 $addFields: {
@@ -71,7 +71,7 @@ exports.UserGetCategories = async (req, res, next) => {
         ]);
 
 
-        return res.status(200).json({ success: true, message: 'Get Categories', category })
+        return res.status(200).json({ success: true, message: 'Get Categories', categories })
     } catch (error) {
         return next(error)
     }

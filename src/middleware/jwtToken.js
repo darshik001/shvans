@@ -28,7 +28,6 @@ exports.generatehashToken = (token) => {
 exports.verifyjwtAccessToken = async (req, res, next) => {
     try {
         const auth = req.headers.authorization
-        console.log(auth)
         if (!auth) {
             return next(CustomeError(401, "Unauthorized"))
         }
