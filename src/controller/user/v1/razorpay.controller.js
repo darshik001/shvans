@@ -278,7 +278,7 @@ exports.RazorpayGetPromotionApplay = async (req, res, next) => {
         }
 
         await checkoutModel.findByIdAndUpdate(checkoutorder._id, { coupon_id: promotion._id })
-        const value = promotion.value_type == "fixed_amount" ? promotion.value * 100 : promotion.value
+        const value = promotion.value_type == "fixed_amount" ? promotion.value * 100 : promotion.value * 100
         const promotionData = {
             reference_id: promotion._id,
             type: "coupon",
@@ -287,7 +287,7 @@ exports.RazorpayGetPromotionApplay = async (req, res, next) => {
             value_type: promotion.value_type,
             description: promotion.description
         }
-       console.log("value",promotionData)
+        console.log("value", promotionData)
 
         return res.status(200).json({ success: true, message: "Coupon Applay Successfully", promotion: { ...promotionData } })
 
