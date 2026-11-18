@@ -8,4 +8,5 @@ router.use('/coupon',require('./coupon.routes'))
 router.use('/order',require('./order.routes'))
 router.use('/announcements',require('../admin/announcements.routes'))
 router.use('/banner',require('./banners.routes'))
+router.use('/report',require('./report.routes'))
 module.exports = router
