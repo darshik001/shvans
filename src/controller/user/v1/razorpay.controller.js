@@ -6,6 +6,7 @@ const couponModel = require('../../../model/coupon.model')
 const { getshippingcharg, CreatOrderINShiproket } = require("../../../services/shiproketapis")
 const userModel = require("../../../model/user.model")
 const orderModel = require("../../../model/order.model")
+const { sendNotification } = require("../../../helper/helper")
 
 
 exports.RazorpayPaymentOrder = async (req, res, next) => {
@@ -548,7 +549,8 @@ exports.RazorapayVerifyPayment = async (req, res, next) => {
         };
 
         const NewOrder = await orderModel.create(placedOrderdata);
-
+        const admin = await userModel.findOne({ role: 'admin' })
+        sendNotification(admin.deviceToken, "New Order", `New Order reviced OnrderNumber is ${NewOrder.orderNumber}`)
         await checkoutModel.findByIdAndDelete(checkoutOrder._id)
         return res.status(200).json({ success: true, message: 'Order Placed Successfully', order: NewOrder });
 
@@ -825,7 +827,9 @@ exports.CreateCODOrder = async (req, res, next) => {
 
         const NewOrder = await orderModel.create(placedOrderdata);
 
-        // 14. Delete checkout
+        const admin = await userModel.findOne({ role: 'admin' })
+         sendNotification(admin.deviceToken, "New Order", `New Order reviced OnrderNumber is ${NewOrder.orderNumber}`)
+      
         await checkoutModel.findByIdAndDelete(checkoutOrder._id);
 
         return res.status(200).json({

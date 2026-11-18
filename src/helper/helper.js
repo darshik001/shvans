@@ -67,8 +67,8 @@ exports.sendNotification = async (fids, title, body) => {
         const res = await getMessaging(firebaseadmin).sendEachForMulticast({
             fids: fids,
             notification: {
-                title: "Hello!",
-                body: "This is a test notification.",
+                title: title,
+                body: body,
             },
         });
 

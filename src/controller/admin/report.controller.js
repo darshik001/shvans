@@ -1,4 +1,5 @@
 
+const inquiryModel = require("../../model/inquiry.model");
 const orderModel = require("../../model/order.model");
 const productModel = require("../../model/product.model");
 const userModel = require("../../model/user.model");
@@ -410,3 +411,27 @@ exports.GetDashboard = async (req, res, next) => {
         return next(error);
     }
 };
+
+
+
+exports.GetAdminInquiryes = async (req, res, next) => {
+    try {
+        const inquiryes = await inquiryModel.find().sort({ createdAt: -1 })
+
+        return res.status(200).json({ success: true, message: "Get All Inquiryes", inquiryes })
+    } catch (error) {
+        return next(error)
+    }
+}
+
+exports.GetAdminInquiryUpdate = async (req, res, next) => {
+    try {
+        const inquiryId = req.params.id
+        const { status } = req.body || {}
+        const inquiry = await inquiryModel.findByIdAndUpdate(inquiryId, { status: status }, { returnDocument: 'after' })
+
+        return res.status(200).json({ success: true, message: 'Update Inquiery', inquiry })
+    } catch (error) {
+        return next(error)
+    }
+}

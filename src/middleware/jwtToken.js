@@ -28,6 +28,7 @@ exports.generatehashToken = (token) => {
 exports.verifyjwtAccessToken = async (req, res, next) => {
     try {
         const auth = req.headers.authorization
+
         if (!auth) {
             return next(CustomeError(401, "Unauthorized"))
         }
@@ -58,7 +59,6 @@ exports.verifyjwtAccessToken = async (req, res, next) => {
 
         const hashaccessToken = this.generatehashToken(token)
         if (!user.accessToken?.includes(hashaccessToken)) {
-            console.log(hashaccessToken)
             return next(CustomeError(401, "Invalid Token"));
         }
 

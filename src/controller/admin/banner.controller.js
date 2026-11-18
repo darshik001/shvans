@@ -96,7 +96,7 @@ exports.UpdateBanner = async (req, res, next) => {
             status,
             bannerImage
         }
-       
+
         await bannerModel.findByIdAndUpdate(bannerId, data)
 
         const banners = await bannerModel.find()
@@ -105,7 +105,7 @@ exports.UpdateBanner = async (req, res, next) => {
             bannerImage: `${process.env.BACKEND_DOMIN_URL}${item.bannerImage}`,
         }));
 
-      
+
         return res.status(200).json({ success: true, message: "Add New Banner", banners: updatedBanners })
 
     } catch (error) {
@@ -117,20 +117,20 @@ exports.UpdateBanner = async (req, res, next) => {
 
 exports.DeleteBanner = async (req, res, next) => {
     try {
-        
+
 
         const bannerId = req.params.id
         const banner = await bannerModel.findById(bannerId)
-        
+
 
         let bannerImage = banner.bannerImage
-    
-            if (bannerImage !== "") {
-                DeleteImage(bannerImage)
-            }
-           
 
-       
+        if (bannerImage !== "") {
+            DeleteImage(bannerImage)
+        }
+
+
+
         await bannerModel.findByIdAndDelete(bannerId)
 
         const banners = await bannerModel.find()
@@ -139,7 +139,7 @@ exports.DeleteBanner = async (req, res, next) => {
             bannerImage: `${process.env.BACKEND_DOMIN_URL}${item.bannerImage}`,
         }));
 
-      
+
         return res.status(200).json({ success: true, message: "Add New Banner", banners: updatedBanners })
 
     } catch (error) {
