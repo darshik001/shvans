@@ -257,6 +257,7 @@ exports.RazorpayGetPromotion = async (req, res, next) => {
 exports.RazorpayGetPromotionApplay = async (req, res, next) => {
     try {
         const { order_id, code, contact, email } = req.body || {};
+        console.log(req.body)
         const promotion = await couponModel.findOne({ couponCode: code })
         if (!promotion) {
             return res.status(200).json({
@@ -828,8 +829,8 @@ exports.CreateCODOrder = async (req, res, next) => {
         const NewOrder = await orderModel.create(placedOrderdata);
 
         const admin = await userModel.findOne({ role: 'admin' })
-         sendNotification(admin.deviceToken, "New Order", `New Order reviced OnrderNumber is ${NewOrder.orderNumber}`)
-      
+        sendNotification(admin.deviceToken, "New Order", `New Order reviced OnrderNumber is ${NewOrder.orderNumber}`)
+
         await checkoutModel.findByIdAndDelete(checkoutOrder._id);
 
         return res.status(200).json({
