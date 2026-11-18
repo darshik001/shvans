@@ -287,7 +287,7 @@ exports.RazorpayGetPromotionApplay = async (req, res, next) => {
             value_type: promotion.value_type,
             description: promotion.description
         }
-
+       console.log("value",promotionData)
 
         return res.status(200).json({ success: true, message: "Coupon Applay Successfully", promotion: { ...promotionData } })
 
