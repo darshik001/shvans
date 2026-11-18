@@ -278,7 +278,7 @@ exports.RazorpayGetPromotionApplay = async (req, res, next) => {
         }
 
         await checkoutModel.findByIdAndUpdate(checkoutorder._id, { coupon_id: promotion._id })
-        const value = promotion.value_type == "fixed_amount" ? promotion.value * 100 : ((checkoutorder.line_items_total / 100) * promotion.value) / 100
+        const value = promotion.value_type == "fixed_amount" ? promotion.value * 100 :( ((checkoutorder.line_items_total / 100) * promotion.value) / 100) * 100
         const promotionData = {
             reference_id: promotion._id,
             type: "coupon",
