@@ -721,7 +721,16 @@
         <span class="nav-badge badge-post">POST</span> Coupons CRUD
       </a>
       <a href="#admin-order" class="nav-item">
-        <span class="nav-badge badge-get">GET</span> Orders & Shipping
+        <span class="nav-badge badge-get">GET</span> Orders, Shipping & RTO
+      </a>
+      <a href="#admin-announcements" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Announcements CRUD
+      </a>
+      <a href="#admin-banner" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Banners CRUD
+      </a>
+      <a href="#admin-report" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Reports & Inquiries
       </a>
 
       <div class="nav-group-title" style="margin-top: 14px;">User APIs</div>
@@ -732,13 +741,19 @@
         <span class="nav-badge badge-get">GET</span> Products & Categories
       </a>
       <a href="#user-cart" class="nav-item">
-        <span class="nav-badge badge-post">POST</span> Add Cart Items (Bulk)
+        <span class="nav-badge badge-post">POST</span> Cart Management
       </a>
       <a href="#user-razorpay" class="nav-item">
-        <span class="nav-badge badge-post">POST</span> Magic Checkout & Payment
+        <span class="nav-badge badge-post">POST</span> Checkout, Payment & COD
       </a>
       <a href="#user-order" class="nav-item">
         <span class="nav-badge badge-get">GET</span> Orders, Cancel & Return
+      </a>
+      <a href="#user-review" class="nav-item">
+        <span class="nav-badge badge-post">POST</span> Product Reviews
+      </a>
+      <a href="#user-common" class="nav-item">
+        <span class="nav-badge badge-get">GET</span> Announcements, Banners & Inquiries
       </a>
 
       <div class="nav-group-title" style="margin-top: 14px;">System & Webhook</div>
@@ -771,9 +786,9 @@
 
       <!-- Quick Filter Chips -->
       <div class="filter-bar">
-        <button class="filter-chip active" onclick="filterByTag('all', this)">All APIs (33)</button>
-        <button class="filter-chip" onclick="filterByTag('admin', this)">Admin APIs (17)</button>
-        <button class="filter-chip" onclick="filterByTag('user', this)">User APIs (14)</button>
+        <button class="filter-chip active" onclick="filterByTag('all', this)">All APIs (58)</button>
+        <button class="filter-chip" onclick="filterByTag('admin', this)">Admin APIs (29)</button>
+        <button class="filter-chip" onclick="filterByTag('user', this)">User APIs (26)</button>
         <button class="filter-chip" onclick="filterByTag('system', this)">Webhooks & System (3)</button>
       </div>
     </div>
@@ -1872,6 +1887,673 @@
           </div>
         </div>
       </div>
+
+      <!-- Get RTO and Return Orders -->
+      <div class="api-card" data-keywords="get rto return orders admin /api/v1/admin/order/rto-return">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/order/rto-return</span>
+            <span class="api-desc">Get all RTO (Return to Origin) and customer Return orders</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public/Internal</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200
+                OK</span></div>
+            <pre><code>{
+  "sucess": true,
+  "message": "Get All RTO And Return Orders",
+  "orders": [
+    {
+      "_id": "67a3fe88c4e92b001a123470",
+      "userId": {
+        "_id": "67a3f8b1c4e92b001a123456",
+        "name": "Darshik Shekhada",
+        "email": "customer@gmail.com",
+        "phone": "9714920969"
+      },
+      "orderNumber": "RE_SHV_512388273903",
+      "type": "return",
+      "status": "pending",
+      "items": [
+        {
+          "name": "Luxury Oud Perfume",
+          "sku": "SKU-45D9CSQ1",
+          "price": 2000,
+          "quantity": 1
+        }
+      ],
+      "total": 2000,
+      "discount": 0,
+      "createdAt": "2026-11-15T12:00:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. ADMIN ANNOUNCEMENTS -->
+    <!-- ========================================== -->
+    <section id="admin-announcements" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Announcements Management</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Add Announcement -->
+      <div class="api-card" data-keywords="add announcement post admin /api/v1/admin/announcements/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/announcements/add</span>
+            <span class="api-desc">Create a new top bar announcement text</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "title": "Flat 20% OFF on all Luxury Fragrances this weekend!",
+  "status": "active"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Add New Announcements",
+  "announcements": [
+    {
+      "_id": "67a3f8b1c4e92b001a123999",
+      "title": "Flat 20% OFF on all Luxury Fragrances this weekend!",
+      "status": "active",
+      "createdAt": "2026-11-19T10:00:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Announcements -->
+      <div class="api-card" data-keywords="get announcements admin /api/v1/admin/announcements/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/announcements/get</span>
+            <span class="api-desc">Fetch all announcements list for admin</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get Announcements",
+  "announcements": [
+    {
+      "_id": "67a3f8b1c4e92b001a123999",
+      "title": "Flat 20% OFF on all Luxury Fragrances this weekend!",
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Announcement -->
+      <div class="api-card" data-keywords="update announcement patch admin /api/v1/admin/announcements/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/announcements/update/:id</span>
+            <span class="api-desc">Update announcement text title or status</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Announcement MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "title": "Free Express Shipping on Orders Above ₹999",
+  "status": "active"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Update Announcements",
+  "announcements": [ ... ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Announcement -->
+      <div class="api-card" data-keywords="delete announcement delete admin /api/v1/admin/announcements/delete/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/admin/announcements/delete/:id</span>
+            <span class="api-desc">Delete announcement by ID</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Announcement MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Update Announcements",
+  "announcements": [ ... ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. ADMIN BANNERS -->
+    <!-- ========================================== -->
+    <section id="admin-banner" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Promotional Banners</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Add Banner -->
+      <div class="api-card" data-keywords="add banner post admin /api/v1/admin/banner/add">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/admin/banner/add</span>
+            <span class="api-desc">Upload hero carousel promotional banner image and details</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Form Data (Fields)</span>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">multipart/form-data</span></div>
+            <pre><code>bannerImage: (Binary Image File)
+title: "Signature Fragrance Series"
+description: "Long-lasting luxury perfumes curated for every moment."
+imageTitle: "Elegance In Every Drop"
+imageDescription: "Explore our bestselling eau de parfum range."
+status: "active" // "active" | "inactive"</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Add New Banner",
+  "banners": [
+    {
+      "_id": "67a3fd99c4e92b001a123888",
+      "title": "Signature Fragrance Series",
+      "description": "Long-lasting luxury perfumes curated for every moment.",
+      "imageTitle": "Elegance In Every Drop",
+      "imageDescription": "Explore our bestselling eau de parfum range.",
+      "bannerImage": "http://localhost:5001/uploads/bannerImage/1732000000000-banner.webp",
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Banners -->
+      <div class="api-card" data-keywords="get banners admin /api/v1/admin/banner/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/banner/get</span>
+            <span class="api-desc">List all banners with full CDN/backend URLs</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Add New Banner",
+  "banners": [
+    {
+      "_id": "67a3fd99c4e92b001a123888",
+      "title": "Signature Fragrance Series",
+      "description": "Long-lasting luxury perfumes curated for every moment.",
+      "imageTitle": "Elegance In Every Drop",
+      "imageDescription": "Explore our bestselling eau de parfum range.",
+      "bannerImage": "http://localhost:5001/uploads/bannerImage/1732000000000-banner.webp",
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Banner -->
+      <div class="api-card" data-keywords="update banner patch admin /api/v1/admin/banner/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/banner/update/:id</span>
+            <span class="api-desc">Update banner text or upload replacement banner image</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">multipart/form-data</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Banner MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Form Data (Fields)</span>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">multipart/form-data</span></div>
+            <pre><code>bannerImage: (Optional File)
+title: "Updated Banner Title"
+description: "Updated description..."
+imageTitle: "New Subtitle"
+imageDescription: "New offer description"
+status: "active"</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Add New Banner",
+  "banners": [ ... ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Banner -->
+      <div class="api-card" data-keywords="delete banner delete admin /api/v1/admin/banner/delete/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-delete">DELETE</span>
+            <span class="api-endpoint">/api/v1/admin/banner/delete/:id</span>
+            <span class="api-desc">Delete banner image file from server and remove DB record</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Banner MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Add New Banner",
+  "banners": [ ... ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 8. ADMIN REPORTS & ANALYTICS -->
+    <!-- ========================================== -->
+    <section id="admin-report" data-tag="admin">
+      <div class="section-title">
+        <span>Admin Reports & Inquiries Analytics</span>
+        <span class="section-tag tag-admin">Admin</span>
+      </div>
+
+      <!-- Get Dashboard Analytics -->
+      <div class="api-card" data-keywords="admin report dashboard analytics stats get /api/v1/admin/report/dashboard">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/report/dashboard</span>
+            <span class="api-desc">Get comprehensive revenue, orders, top products & chart analytics</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Query Params</div>
+              <div class="meta-val">?period=week | month | year (default: week)</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "get dashboard data",
+  "dashboardData": {
+    "success": true,
+    "period": "week",
+    "stats": {
+      "totalRevenue": 48500,
+      "revenueChange": 15.2,
+      "totalOrders": 32,
+      "ordersChange": 8.5,
+      "totalProducts": 14,
+      "productsChange": 0,
+      "totalCustomers": 28,
+      "customersChange": 12
+    },
+    "comparison": {
+      "currentRevenue": 48500,
+      "previousRevenue": 42100,
+      "currentOrders": 32,
+      "previousOrders": 29
+    },
+    "orderSummary": {
+      "completedOrders": 24,
+      "processingOrders": 5,
+      "pendingOrders": 3,
+      "total": 32
+    },
+    "recentOrders": [
+      {
+        "_id": "67a3fe88c4e92b001a123470",
+        "orderId": "SHV_839201948291",
+        "customer": "Darshik Shekhada",
+        "items": 1,
+        "total": 2000,
+        "status": "delivered",
+        "date": "2026-11-15T12:00:00.000Z"
+      }
+    ],
+    "topProducts": [
+      {
+        "name": "Luxury Oud Perfume",
+        "category": "SKU-45D9CSQ1",
+        "sold": 18,
+        "price": 2000,
+        "image": "/uploads/productImages/perfume.webp"
+      }
+    ],
+    "chartData": [
+      { "day": "Mon", "value": 5200 },
+      { "day": "Tue", "value": 7400 },
+      { "day": "Wed", "value": 6100 },
+      { "day": "Thu", "value": 8900 },
+      { "day": "Fri", "value": 9500 },
+      { "day": "Sat", "value": 6400 },
+      { "day": "Sun", "value": 5000 }
+    ]
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Inquiries -->
+      <div class="api-card" data-keywords="get inquiries admin report /api/v1/admin/report/inquiry">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/admin/report/inquiry</span>
+            <span class="api-desc">Get all customer contact & support inquiry submissions</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Get All Inquiryes",
+  "inquiryes": [
+    {
+      "_id": "67a3f8b1c4e92b001a123777",
+      "name": "Aarav Sharma",
+      "email": "aarav@gmail.com",
+      "phone": "9876543210",
+      "subject": "Bulk perfume order inquiry",
+      "message": "I would like to order 50 units for corporate gifting.",
+      "status": "pending",
+      "createdAt": "2026-11-19T09:00:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Inquiry Status -->
+      <div class="api-card" data-keywords="update inquiry status patch admin /api/v1/admin/report/inquiry/update/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-patch">PATCH</span>
+            <span class="api-endpoint">/api/v1/admin/report/inquiry/update/:id</span>
+            <span class="api-desc">Update inquiry processing status (pending / resolved / contacted)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;AdminAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Inquiry MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "status": "resolved"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Update Inquiery",
+  "inquiry": {
+    "_id": "67a3f8b1c4e92b001a123777",
+    "name": "Aarav Sharma",
+    "email": "aarav@gmail.com",
+    "phone": "9876543210",
+    "subject": "Bulk perfume order inquiry",
+    "message": "I would like to order 50 units for corporate gifting.",
+    "status": "resolved"
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ========================================== -->
@@ -2764,6 +3446,86 @@
           </div>
         </div>
       </div>
+
+      <!-- Create COD / Dummy Order -->
+      <div class="api-card" data-keywords="cod order dummy order cash on delivery razorpay post user /api/v1/user/razorpay/dummy-order">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/razorpay/dummy-order</span>
+            <span class="api-desc">Place Cash on Delivery (COD) order with auto Shiprocket courier allocation</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public / Checkout</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Payment Mode</div>
+              <div class="meta-val">Cash on Delivery (COD)</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "order_id": "order_OD9482019482",
+  "name": "Darshik Shekhada",
+  "email": "customer@gmail.com",
+  "phone": "9714920969",
+  "address": {
+    "line1": "243, Gopinath Society",
+    "line2": "Near Main Road",
+    "city": "Surat",
+    "state": "Gujarat",
+    "country": "India",
+    "zipcode": "395005"
+  }
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "COD Order Placed Successfully",
+  "order": {
+    "_id": "67a3fe88c4e92b001a123499",
+    "orderNumber": "order_OD9482019482",
+    "type": "forward",
+    "status": "pending",
+    "total": 2000,
+    "discount": 0,
+    "shippingcharges": 0,
+    "paymentData": {
+      "method": "cod",
+      "razorpay_order_id": null,
+      "razorpay_payment_id": null,
+      "status": "pending"
+    },
+    "shipmentData": {
+      "shipment_id": "8932019",
+      "shiprocket_order_id": "9382101",
+      "awb_number": null,
+      "courier_partner": "Delhivery Surface"
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ========================================== -->
@@ -2923,6 +3685,304 @@
             <pre><code>{
   "success": true,
   "message": "Return Created Successfully"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- USER REVIEWS -->
+    <!-- ========================================== -->
+    <section id="user-review" data-tag="user">
+      <div class="section-title">
+        <span>User Product Reviews & Ratings</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Create / Update Review -->
+      <div class="api-card" data-keywords="create review user post product rating /api/v1/user/review/create">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/review/create</span>
+            <span class="api-desc">Submit or update product star rating and review comment (Delivered orders only)</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;UserAccessToken&gt;</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-key">Requirement</div>
+              <div class="meta-val">Order must be in <code>delivered</code> status</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "orderId": "67a3fe88c4e92b001a123470",
+  "productId": "67a3f8b1c4e92b001a123450",
+  "rating": 5,
+  "comment": "Mesmerizing oriental fragrance with extraordinary longevity!"
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "submitted a review for this product",
+  "reviews": [
+    {
+      "_id": "67a3fe88c4e92b001a123555",
+      "userId": "67a3f8b1c4e92b001a123456",
+      "orderId": "67a3fe88c4e92b001a123470",
+      "productId": "67a3f8b1c4e92b001a123450",
+      "rating": 5,
+      "comment": "Mesmerizing oriental fragrance with extraordinary longevity!",
+      "createdAt": "2026-11-19T10:30:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get User's Reviews -->
+      <div class="api-card" data-keywords="get user reviews /api/v1/user/review/get">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/review/get</span>
+            <span class="api-desc">Fetch all reviews submitted by the authenticated user</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-auth-req">🔒 Bearer Auth</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Headers</div>
+              <div class="meta-val">Authorization: Bearer &lt;UserAccessToken&gt;</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "get all revires",
+  "reviews": [
+    {
+      "_id": "67a3fe88c4e92b001a123555",
+      "userId": "67a3f8b1c4e92b001a123456",
+      "orderId": "67a3fe88c4e92b001a123470",
+      "productId": "67a3f8b1c4e92b001a123450",
+      "rating": 5,
+      "comment": "Mesmerizing oriental fragrance with extraordinary longevity!",
+      "createdAt": "2026-11-19T10:30:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Product Reviews -->
+      <div class="api-card" data-keywords="get product reviews public /api/v1/user/review/product/:id">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/review/product/:id</span>
+            <span class="api-desc">Get customer reviews & ratings for a specific product detail page</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">URL Params</div>
+              <div class="meta-val">:id = Product MongoDB _id</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "get review",
+  "reviews": [
+    {
+      "_id": "67a3fe88c4e92b001a123555",
+      "userId": {
+        "_id": "67a3f8b1c4e92b001a123456",
+        "name": "Darshik Shekhada",
+        "profile": "avatar.jpg"
+      },
+      "productId": "67a3f8b1c4e92b001a123450",
+      "rating": 5,
+      "comment": "Mesmerizing oriental fragrance with extraordinary longevity!",
+      "createdAt": "2026-11-19T10:30:00.000Z"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- USER COMMON (ANNOUNCEMENTS, BANNERS, INQUIRY) -->
+    <!-- ========================================== -->
+    <section id="user-common" data-tag="user">
+      <div class="section-title">
+        <span>Public Announcements, Banners & Support Inquiries</span>
+        <span class="section-tag tag-user">User</span>
+      </div>
+
+      <!-- Get Announcements -->
+      <div class="api-card" data-keywords="get announcement public user announcements /api/v1/user/common/announc">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/common/announc</span>
+            <span class="api-desc">Fetch active top bar announcement text marquee strings</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "get announcement",
+  "announcements": [
+    "Flat 20% OFF on all Luxury Fragrances this weekend!",
+    "Free Express Shipping on Orders Above ₹999"
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Banners -->
+      <div class="api-card" data-keywords="get banners public homepage carousel /api/v1/user/common/banner">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-get">GET</span>
+            <span class="api-endpoint">/api/v1/user/common/banner</span>
+            <span class="api-desc">Fetch active promotional banners for homepage hero carousel</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "get announcement",
+  "banners": [
+    {
+      "_id": "67a3fd99c4e92b001a123888",
+      "title": "Signature Fragrance Series",
+      "description": "Long-lasting luxury perfumes curated for every moment.",
+      "imageTitle": "Elegance In Every Drop",
+      "imageDescription": "Explore our bestselling eau de parfum range.",
+      "bannerImage": "http://localhost:5001/uploads/bannerImage/1732000000000-banner.webp",
+      "status": "active"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Inquiry -->
+      <div class="api-card" data-keywords="post inquiry contact support form user /api/v1/user/common/inquiry">
+        <div class="api-header" onclick="toggleCard(this)">
+          <div class="api-header-left">
+            <span class="method-badge badge-post">POST</span>
+            <span class="api-endpoint">/api/v1/user/common/inquiry</span>
+            <span class="api-desc">Submit contact / customer inquiry form to admin support team</span>
+          </div>
+          <div class="api-header-right">
+            <span class="badge-public">Public</span>
+            <span class="collapse-icon">▼</span>
+          </div>
+        </div>
+        <div class="api-body">
+          <div class="meta-box">
+            <div class="meta-item">
+              <div class="meta-key">Content-Type</div>
+              <div class="meta-val">application/json</div>
+            </div>
+          </div>
+          <div class="box-title">
+            <span>Request Payload (Body)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span></div>
+            <pre><code>{
+  "name": "Darshik Shekhada",
+  "email": "customer@gmail.com",
+  "phone": "9714920969",
+  "subject": "Bulk Corporate Gift Query",
+  "message": "We would like to order customized 100ml perfume bottles with our logo."
+}</code></pre>
+          </div>
+          <div class="box-title">
+            <span>Response (200 OK)</span>
+            <button class="btn-copy" onclick="copyCode(this)">Copy JSON</button>
+          </div>
+          <div class="code-container">
+            <div class="code-header"><span class="code-lang">json</span> <span class="status-badge status-200">200 OK</span></div>
+            <pre><code>{
+  "success": true,
+  "message": "Your inquiry has been sent to our team successfully"
 }</code></pre>
           </div>
         </div>
