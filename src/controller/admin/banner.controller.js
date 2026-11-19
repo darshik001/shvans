@@ -64,7 +64,7 @@ exports.GetBanner = async (req, res, next) => {
             bannerImage: `${process.env.BACKEND_DOMIN_URL}${item.bannerImage}`,
         }));
 
-        return res.status(200).json({ success: true, message: "Add New Banner", banners: updatedBanners })
+        return res.status(200).json({ success: true, message: "Get All Banners", banners: updatedBanners })
     } catch (error) {
         return next(error)
     }
@@ -106,7 +106,7 @@ exports.UpdateBanner = async (req, res, next) => {
         }));
 
 
-        return res.status(200).json({ success: true, message: "Add New Banner", banners: updatedBanners })
+        return res.status(200).json({ success: true, message: "Update Banner", banners: updatedBanners })
 
     } catch (error) {
         return next(error)
@@ -140,7 +140,7 @@ exports.DeleteBanner = async (req, res, next) => {
         }));
 
 
-        return res.status(200).json({ success: true, message: "Add New Banner", banners: updatedBanners })
+        return res.status(200).json({ success: true, message: "Delete Banner", banners: updatedBanners })
 
     } catch (error) {
         return next(error)

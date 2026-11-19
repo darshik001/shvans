@@ -54,7 +54,7 @@ exports.DeleteAnnouncements = async (req, res, next) => {
         await announcementsModel.findByIdAndDelete(announcId)
         const announcements = await announcementsModel.find()
 
-        return res.status(200).json({ success: true, message: "Update Announcements", announcements })
+        return res.status(200).json({ success: true, message: "Delete Announcements", announcements })
 
     } catch (error) {
         return next(error)
