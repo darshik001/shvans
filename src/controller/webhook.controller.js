@@ -143,7 +143,6 @@ exports.ShiproketWebhook = async (req, res, next) => {
             if (OrderStatus == "QC FAILED") {
                 order = await orderModel.findOneAndUpdate({ orderNumber: payload.order_id }, { $set: { "paymentData.status": "paid", "refundData.status": "failed", "returnData.status": OrderStatus, "returnData.completeAt": Date.now() } }, { returnDocument: 'after' })
                 return res.status(200).json("ok")
-
             }
 
             if (OrderStatus == "RETURN PICKED UP") {

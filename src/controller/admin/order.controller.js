@@ -122,3 +122,17 @@ exports.GenerateLabels = async (req, res, next) => {
         return next(error);
     }
 }
+
+
+
+exports.GetRTOAndReturnOrders = async (req, res, next) => {
+    try {
+
+        const orders = await orderModel.find({ type: { $in: ["rto", "return"] } }).populate("userId", "name email phone profile").sort({ createdAt: -1 })
+
+        return res.status(200).json({ sucess: true, message: "Get All RTO And Return Orders", orders })
+
+    } catch (error) {
+        return next(error)
+    }
+}
